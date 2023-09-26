@@ -16,7 +16,7 @@ function CommandParser.ParseCommand(inputString, player)
 	-- Extract the first word (presumably the command) from the input string
 	local firstWord = inputString:match("(%S+)")
 
-	if firstWord then
+	if firstWord and CommandHandler.FindCommandInString(firstWord) ~= nil then
 		commandData.name = CommandHandler.FindCommandInString(firstWord).name
 
 		

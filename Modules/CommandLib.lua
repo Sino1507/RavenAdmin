@@ -1,10 +1,27 @@
 local CommandHandler = {}
 local PlayerHandler = require(script.Parent.PlayerLib)
 
+
+function printCommand(speaker, args)
+	return print(table.concat(args, " "))
+end
+
+function killCommand(speaker, args)
+	local target = PlayerHandler.FindPlayerByUsername(args[1]) or PlayerHandler.FindPlayerByDisplayName(args[1]) or error("Arguments not defined or player not reachable!")
+	target.Character:BreakJoints()
+end
+
+function kickCommand(speaker, args)
+	local target = PlayerHandler.FindPlayerByUsername(args[1]) or PlayerHandler.FindPlayerByDisplayName(args[1]) or error("Arguments not defined or player not reachable!")
+	local reason = (#args > 2 and table.concat(table.remove(args, 1), " ")) or (#args == 2 and args[2]) or "N/A"
+	target:Kick("You have been kicked by: "..speaker.Name.."!\nReason: "..reason)
+end
+
 -- Define a list of commands with their ranks and aliases
 local commands = {
-	{ name = "print", rank = 5, aliases = {"write", "output"} },
-	{ name = "kill", rank = 2, aliases = {"end", "terminate"} },
+	{ name = "print", rank = 5, aliases = {"write", "output"}, callback = printCommand },
+	{ name = "kill", rank = 2, aliases = {"end", "terminate"}, callback = killCommand },
+	{ name = "kick", rank = 2, aliases = {"remove"}, callback = kickCommand },
 }
 
 

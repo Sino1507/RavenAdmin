@@ -52,4 +52,50 @@ function PlayerHandler.GivePlayerData(player)
 	return PlayerData[player.UserId]
 end
 
+function PlayerHandler.FindPlayerByUsername(partialUsername)
+	partialUsername = partialUsername:lower() -- Convert to lowercase for case-insensitive search
+	local closestMatch = nil
+	local closestMatchLengthDiff = math.huge
+	
+	-- Check if the partialName is contained within the lowercase name
+	for _, player in pairs(game.Players:GetPlayers()) do
+		local username = player.Name:lower() 
+
+		
+		local startIndex, endIndex = string.find(username, partialUsername)
+		if startIndex and endIndex then
+			local lengthDiff = math.abs(endIndex - startIndex - #partialUsername)
+			if lengthDiff < closestMatchLengthDiff then
+				closestMatch = player
+				closestMatchLengthDiff = lengthDiff
+			end
+		end
+	end
+
+	return closestMatch
+end
+
+function PlayerHandler.FindPlayerByDisplayName(partialDisplayName)
+	partialDisplayName = partialDisplayName:lower() -- Convert to lowercase for case-insensitive search
+	local closestMatch = nil
+	local closestMatchLengthDiff = math.huge
+
+	for _, player in pairs(game.Players:GetPlayers()) do
+		local displayName = player.DisplayName:lower() 
+
+		-- Check if the partialDisplayName is contained within the lowercase display name
+		local startIndex, endIndex = string.find(displayName, partialDisplayName)
+		if startIndex and endIndex then
+			local lengthDiff = math.abs(endIndex - startIndex - #partialDisplayName)
+			if lengthDiff < closestMatchLengthDiff then
+				closestMatch = player
+				closestMatchLengthDiff = lengthDiff
+			end
+		end
+	end
+
+	return closestMatch
+end
+
+
 return PlayerHandler

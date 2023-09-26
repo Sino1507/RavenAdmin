@@ -35,13 +35,13 @@ local CommandParser = require(script.Parent.Modules.CommandParser)--[[
 local gameCreatorId = game.CreatorId
 
 -- UTILITY FUNCTIONS
-function CommandAndPermission(name, parsed, player)
+function CommandAndPermission(parsed, player)
 	-- Retrieve command data and player data, to check for correct permission
 	local CommandData = CommandHandler.FindCommandInString(parsed.name)
 	local PlayerData = PlayerHandler.GivePlayerData(player).Data
 	
-	if CommandData.rank <= PlayerData.rank and CommandData.name == name then 
-		return true
+	if CommandData ~= nil and CommandData.rank <= PlayerData.rank and CommandData.name ~= "" then 
+		return CommandData.callback(player, parsed.args)
 	end
 	
 	return false
@@ -64,9 +64,13 @@ game.Players.PlayerAdded:Connect(function(Player)
 	
 	Player.Chatted:Connect(function(msg)
 		local ParsedData = CommandParser.ParseCommand(msg, Player)
-
-		if CommandAndPermission("print", ParsedData, Player) then 
-			print(table.concat(ParsedData.args, " "))
-		end
+		
+		local success, error = pcall(function()
+			if ParsedData.name ~= nil then 
+				CommandAndPermission(ParsedData, Player)
+			end
+		end)
+		
+		assert(success, error)
 	end)
 end)
